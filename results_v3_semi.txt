@@ -1,0 +1,27 @@
+Naive Bayes Results:
+Accuracy: 0.20
+Precision: 0.17
+Recall: 0.75
+F1-Score: 0.27
+Confusion Matrix:
+[[ 1 15]
+ [ 1  3]]
+
+Logistic Regression Results:
+Accuracy: 0.80
+Precision: 0.50
+Recall: 1.00
+F1-Score: 0.67
+Confusion Matrix:
+[[12  4]
+ [ 0  4]]
+
+Random Forest Results:
+Accuracy: 0.75
+Precision: 0.40
+Recall: 0.50
+F1-Score: 0.44
+Confusion Matrix:
+[[13  3]
+ [ 2  2]]
+
