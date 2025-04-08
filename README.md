@@ -2,6 +2,19 @@
 ### README.md 
 
 ```markdown
+## About This Project
+This phishing detection project uses supervised and semi-supervised ML on the Enron email dataset. I built it to explore model performance (Naive Bayes, Logistic Regression, Random Forest) and learned data preprocessing, feature engineering, and evaluation along the way.
+
+## My Journey
+- **What I Did**: Wrote the initial model training (`phishing_detector_v2.py`), engineered features (urgency, URLs), and drove the project from concept to GitHub.
+- **Collaboration**: Worked with an AI assistant (Grok from xAI) for debugging, code structuring, and Git commands—similar to pair programming or mentorship I’d seek in a team.
+- **Growth**: Mastered Git, tackled semi-supervised learning, and learned to balance precision/recall—skills I’m excited to apply next!
+
+## Skills Demonstrated
+- Python, pandas, scikit-learn, Git
+- Data preprocessing, feature engineering
+- Model training, evaluation, debugging
+
 # Phishing Email Detector
 
 This project implements phishing email detection using machine learning on the Enron email dataset. It features two pipelines: a **supervised learning** approach with manually labeled data and a **semi-supervised learning** approach to scale labeling to a larger dataset. Three models—Naive Bayes, Logistic Regression, and Random Forest—are trained, evaluated, and compared to demonstrate their strengths and weaknesses in phishing detection. The project highlights data preprocessing, feature engineering, model training, and evaluation, offering insights into ML model selection.
