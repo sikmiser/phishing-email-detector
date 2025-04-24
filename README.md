@@ -237,6 +237,30 @@ This pipeline scales labeling using a trained model.
   - `confusion_matrices_v3.png`, `confusion_matrices_v3_semi.png` (model performance visuals).
   - `email_counts_v3.png`, `email_counts_v3_semi.png` (label distributions).
 
+## Improvements
+- **Cross-Validation**: Added 5-fold cross-validation for robust performance:
+  - Logistic Regression: CV Accuracy 78% (±0.19)
+  - Random Forest: CV Accuracy 71% (±0.13)
+  - Naive Bayes: CV Accuracy 56% (±0.12)
+- **Enhanced Detection**: Tweaked features (urgency, URLs, phishing keywords) and thresholds to better identify overt phishing emails, with Random Forest successfully detecting a sample ("urgent act now...").
+- **Learning Focus**: Explored detection efficacy and false positives to build ML skills for threat analysis.
+
+## Files
+- **Scripts**:
+  - `prepare_emails.py`: Preprocesses Enron emails.
+  - `label_emails_manually.py`: Labels initial dataset.
+  - `train_phishing_detector.py`: Supervised training.
+  - `auto_label_emails.py`: Semi-supervised labeling.
+  - `train_phishing_detector_semi.py`: Semi-supervised training with cross-validation.
+- **Outputs**:
+  - `confusion_matrices_v3.png`, `confusion_matrices_v3_semi.png`: Model performance visuals.
+  - `email_counts_v3.png`, `email_counts_v3_semi.png`: Dataset distribution.
+  - `results_v3.txt`, `results_v3_semi.txt`: Metrics.
+  - `enron_predictions_v3.csv`, `enron_predictions_v3_semi.csv`: Predictions.
+
+## Author
+- sikmiser
+
 ## Future Improvements
 - Scale to larger datasets (e.g., 1000+ emails) for robustness.
 - Implement cross-validation for reliable evaluation.
