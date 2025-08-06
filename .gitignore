@@ -1,0 +1,6 @@
+emails.csv
+enron_sample.csv
+venv/
+*.pyc
+__pycache__
+C:\Users\amand\.kaggle\
