@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-file_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_sample.csv')
+file_path = os.path.join(os.path.dirname(__file__), 'enron_sample.csv')
 print(f"Looking for file at: {file_path}")
 
 try:
@@ -25,6 +25,6 @@ print("Number of emails:", len(sample_emails))
 print("First email (raw):", sample_emails[0][:100])
 
 emails = pd.DataFrame({'text': sample_emails, 'label': labels})
-emails.to_csv(os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_labeled.csv'), index=False)
+emails.to_csv(os.path.join(os.path.dirname(__file__), 'enron_labeled.csv'), index=False)
 print("First 5 emails and labels:")
 print(emails.head())
