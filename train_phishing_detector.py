@@ -12,7 +12,7 @@ import seaborn as sns
 import numpy as np
 
 # Load Data
-data_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_labeled.csv')
+data_path = os.path.join(os.path.dirname(__file__), 'enron_labeled.csv')
 print(f"Loading data from: {data_path}")
 
 if not os.path.exists(data_path):
@@ -81,7 +81,7 @@ for name, model in models.items():
     }
 
 # Print and save results
-output_dir = os.path.expanduser('~/Documents/ml_projects')
+output_dir = os.path.dirname(__file__)  # Use the script's directory
 results_file = os.path.join(output_dir, 'results_v3.txt')
 with open(results_file, 'w') as f:
     for name, metrics in results.items():
