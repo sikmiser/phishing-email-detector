@@ -10,12 +10,13 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load Data
+# Load and validate data
 data_path = os.path.join(os.path.dirname(__file__), 'enron_auto_labeled.csv')
 print(f"Loading data from: {data_path}")
 if not os.path.exists(data_path):
     print(f"Error: File not found at {data_path}")
     exit(1)
+
 emails = pd.read_csv(data_path)
 print("Data loaded. Columns:", emails.columns.tolist())
 if 'text' not in emails.columns or 'label' not in emails.columns:
@@ -23,14 +24,16 @@ if 'text' not in emails.columns or 'label' not in emails.columns:
     exit(1)
 emails['text'] = emails['text'].fillna('')
 
-# Feature Engineering
+# Feature engineering
 def extract_subject(text):
+    """Extract subject line from email text."""
     match = re.search(r'Subject: (.*?)\n', text)
     return match.group(1) if match else ''
+
 emails['subject'] = emails['text'].apply(extract_subject)
 emails['urgency'] = emails['text'].apply(lambda x: 1 if any(word in x.lower() for word in ['urgent', 'now', 'immediately']) else 0) * 100
 emails['url'] = emails['text'].apply(lambda x: 1 if re.search(r'http[s]?://|www\.', x.lower()) else 0) * 100
-emails['phish_keywords'] = emails['text'].apply(lambda x: sum(x.lower().count(word) for word in ['urgent', 'act', 'quick']) > 0) * 100  # New feature
+emails['phish_keywords'] = emails['text'].apply(lambda x: sum(x.lower().count(word) for word in ['urgent', 'act', 'quick']) > 0) * 100
 emails['word_count'] = emails['text'].apply(lambda x: len(x.split()))
 emails['combined'] = emails['text'] + ' ' + emails['subject']
 
@@ -44,23 +47,26 @@ X['phish_keywords'] = emails['phish_keywords']
 X['word_count'] = emails['word_count']
 y = emails['label']
 
-# Split for single-run metrics and prediction
+# Split data for training and testing
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Models
+# Define models
 models = {
     'Naive Bayes': MultinomialNB(),
     'Logistic Regression': LogisticRegression(max_iter=1000),
     'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42)
 }
 
-# Train and evaluate with cross-validation
+# Train and evaluate models with cross-validation
 results = {}
-threshold = 0.1
+threshold = 0.03
 for name, model in models.items():
-    scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
+    # Cross-validation
+    cv_scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
     print(f"\n{name} Results:")
-    print(f"CV Accuracy: {scores.mean():.2f} (+/- {scores.std() * 2:.2f})")
+    print(f"CV Accuracy: {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
+
+    # Train and predict
     model.fit(X_train, y_train)
     y_prob = model.predict_proba(X_test)[:, list(model.classes_).index('phishing')]
     y_pred = ['phishing' if p >= threshold else 'safe' for p in y_prob]
@@ -70,13 +76,28 @@ for name, model in models.items():
         'Recall': recall_score(y_test, y_pred, pos_label='phishing', zero_division=0),
         'F1': f1_score(y_test, y_pred, pos_label='phishing', zero_division=0),
         'Confusion Matrix': confusion_matrix(y_test, y_pred, labels=['safe', 'phishing']),
-        'Predictions': y_pred
+        'Predictions': y_pred,
+        'CV_Scores': cv_scores  # Store for later use
     }
     print(f"Single-Run Accuracy: {results[name]['Accuracy']:.2f}")
     print(f"Precision: {results[name]['Precision']:.2f}")
     print(f"Recall: {results[name]['Recall']:.2f}")
     print(f"F1-Score: {results[name]['F1']:.2f}")
     print(f"Confusion Matrix:\n{results[name]['Confusion Matrix']}")
+
+# Save results to file
+output_dir = os.path.dirname(__file__)  # Use script's directory
+results_file = os.path.join(output_dir, 'results_v3_semi.txt')
+with open(results_file, 'w') as f:
+    for name, metrics in results.items():
+        f.write(f"{name} Results:\n")
+        f.write(f"CV Accuracy: {metrics['CV_Scores'].mean():.2f} (+/- {metrics['CV_Scores'].std() * 2:.2f})\n")
+        f.write(f"Single-Run Accuracy: {metrics['Accuracy']:.2f}\n")
+        f.write(f"Precision: {metrics['Precision']:.2f}\n")
+        f.write(f"Recall: {metrics['Recall']:.2f}\n")
+        f.write(f"F1-Score: {metrics['F1']:.2f}\n")
+        f.write(f"Confusion Matrix:\n{metrics['Confusion Matrix']}\n\n")
+print(f"Results saved to: {results_file}")
 
 # Predict a new email
 new_email_text = 'urgent act now get rich quick http://example.com'
@@ -88,7 +109,7 @@ new_features['phish_keywords'] = 1 * 100
 new_features['word_count'] = len(new_email_text.split())
 for name, model in models.items():
     prob = model.predict_proba(new_features)[0, list(model.classes_).index('phishing')]
-    pred = 'phishing' if prob >= 0.05 else 'safe'  # Use 0.05 threshold
+    pred = 'phishing' if prob >= threshold else 'safe'
     print(f"{name} Prediction for '{new_email_text}': {pred} (Phishing prob: {prob:.4f})")
 
 # Save predictions
@@ -99,7 +120,6 @@ predictions_df = pd.DataFrame({
     'Logistic Regression': results['Logistic Regression']['Predictions'],
     'Random Forest': results['Random Forest']['Predictions']
 })
-output_dir = os.path.dirname(__file__)  # Use the script's directory
 predictions_file = os.path.join(output_dir, 'enron_predictions_v3_semi.csv')
 predictions_df.to_csv(predictions_file, index=False)
 print(f"Predictions saved to: {predictions_file}")
