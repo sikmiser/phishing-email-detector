@@ -7,9 +7,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+
 
 # Load Data
 data_path = os.path.join(os.path.dirname(__file__), 'enron_labeled.csv')
@@ -64,6 +66,9 @@ models = {
 results = {}
 threshold = 0.3  # Lower threshold for phishing
 for name, model in models.items():
+    # Cross-validation for more robust evaluation
+    cv_scores = cross_val_score(model, X, y, cv=5, scoring='accuracy')
+    print(f"\n{name} Cross-Validation Accuracy: {cv_scores.mean():.2f} ± {cv_scores.std() * 2:.2f}")
     model.fit(X_train, y_train)
     if name == 'Naive Bayes':
         y_pred = model.predict(X_test)
