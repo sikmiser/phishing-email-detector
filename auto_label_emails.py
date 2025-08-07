@@ -5,9 +5,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 
 # Paths
-labeled_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_labeled.csv')
-sample_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_sample.csv')
-output_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_auto_labeled.csv')
+labeled_path = os.path.join(os.path.dirname(__file__), 'enron_labeled.csv')
+sample_path = os.path.join(os.path.dirname(__file__), 'enron_sample.csv')
+output_path = os.path.join(os.path.dirname(__file__), 'enron_auto_labeled.csv')
 
 # Check files exist
 if not os.path.exists(labeled_path):

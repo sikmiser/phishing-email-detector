@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load Data
-data_path = os.path.join(os.path.expanduser('~'), 'Documents', 'ml_projects', 'enron_auto_labeled.csv')
+data_path = os.path.join(os.path.dirname(__file__), 'enron_auto_labeled.csv')
 print(f"Loading data from: {data_path}")
 if not os.path.exists(data_path):
     print(f"Error: File not found at {data_path}")
@@ -79,7 +79,6 @@ for name, model in models.items():
     print(f"Confusion Matrix:\n{results[name]['Confusion Matrix']}")
 
 # Predict a new email
-# Predict a new email
 new_email_text = 'urgent act now get rich quick http://example.com'
 new_email = vectorizer.transform([new_email_text]).toarray()
 new_features = pd.DataFrame(new_email, columns=vectorizer.get_feature_names_out())
@@ -100,7 +99,7 @@ predictions_df = pd.DataFrame({
     'Logistic Regression': results['Logistic Regression']['Predictions'],
     'Random Forest': results['Random Forest']['Predictions']
 })
-output_dir = os.path.expanduser('~/Documents/ml_projects')
+output_dir = os.path.dirname(__file__)  # Use the script's directory
 predictions_file = os.path.join(output_dir, 'enron_predictions_v3_semi.csv')
 predictions_df.to_csv(predictions_file, index=False)
 print(f"Predictions saved to: {predictions_file}")
